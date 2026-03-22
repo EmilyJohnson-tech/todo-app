@@ -2,6 +2,33 @@ const form = document.getElementById('todo-form');
 const input = document.getElementById('todo-input');
 const list = document.getElementById('todo-list');
 const emptyState = document.getElementById('empty-state');
+const themeToggle = document.getElementById('theme-toggle');
+const THEME_STORAGE_KEY = 'theme-preference';
+
+function initTheme() {
+    let savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+
+    if (!savedTheme) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        savedTheme = prefersDark ? 'dark' : 'light';
+    }
+
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeToggleIcon(savedTheme);
+}
+
+function updateThemeToggleIcon(theme) {
+    themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+    updateThemeToggleIcon(newTheme);
+}
 
 function refreshEmptyState() {
     emptyState.style.display = list.children.length === 0 ? 'block' : 'none';
@@ -41,3 +68,6 @@ form.addEventListener('submit', (event) => {
 });
 
 refreshEmptyState();
+
+initTheme();
+themeToggle.addEventListener('click', toggleTheme);
